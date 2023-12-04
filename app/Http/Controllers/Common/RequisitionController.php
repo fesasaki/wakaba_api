@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Requisition;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -25,6 +26,8 @@ class RequisitionController extends Controller
         $newUser = new User($data->all());
         $newUser->password = Str::random(8);
         $newUser->active = false;
+        $newUser->started = false;
+        $newUser->approved = false;
         $newUser->user_type = UserType::UNKNOW;
         $newUser->username = Str::random(12);
 
@@ -60,12 +63,73 @@ class RequisitionController extends Controller
         }    */
     }
 
-    public function list()
+    public function list(Request $request)
     {
-        $requisitions = Requisition::with('user')->get();
+        $status = $request->get('status');
+
+        $where[] = ['status', $status];
+
+        $requisitions = Requisition::where($where)->with('user', 'approver')->get();
 
         return response()->json([
-            'data' => $requisitions 
+            'data' => $requisitions
         ], 200);
+    }
+
+    public function update(Request $request)
+    {
+        DB::beginTransaction();
+
+        // try {
+
+        $id = $request->get('requisition_id');
+        $decision = $request->get('decision');
+        $text = '';
+        $notification = false;
+
+        $requisition = Requisition::find($id);
+        $user = User::find($requisition->user_id);
+
+        if($decision) {
+            $text = 'aprovado';
+            $requisition->status = RequistionStatus::APPROVED;
+            $requisition->approver_id = Auth::id();
+
+            $user->approved = true;
+            $user->active = true;
+            $user->started = false;
+
+            $notification = true;
+        } else {
+            $text = 'reprovado';
+            $requisition->status = RequistionStatus::REPROVED;
+            $requisition->approver_id = Auth::id();
+
+            $user->approved = false;
+            $user->active = false;
+            $user->started = false;
+
+            $notification = false;
+        }
+
+        $requisition->update();
+        $user->update();
+        
+        if($notification) {
+            NotificationController::create($user->id);
+        }
+        
+        DB::commit();
+
+        return response()->json([
+            'message' => 'Solicitação ' . $text . ' com sucesso'
+        ], 200);
+
+        /*  }
+        catch(Exception $exc) {
+            DB::rollback();
+            Log::error($exc->getMessage());
+            return response()->json(['message' => 'Falha ao solicitar usuário.'], 500);
+        }    */
     }
 }

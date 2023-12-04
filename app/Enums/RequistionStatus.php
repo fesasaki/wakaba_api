@@ -8,6 +8,6 @@ final class RequistionStatus extends Enum
 {
     const WAITING = 0;
     const APPROVED = 200;
-    const CANCELED = 400;
+    const REPROVED = 400;
 }
 

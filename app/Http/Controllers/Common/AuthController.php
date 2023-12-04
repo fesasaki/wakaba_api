@@ -46,4 +46,37 @@ class AuthController extends Controller
             return response()->json(['message' => 'Falha ao solicitar login.'], 500);
         }
     }
+
+    public function checkUser(Request $request)
+    {   
+        try {
+            // validate inputs
+            $rules = [
+                'email' => 'required',
+            ];
+
+            $request->validate($rules);
+
+            $user = User::where('email', $request->email)->where('active', true)->first();
+
+            if ($user) {
+
+                $response = [
+                    'started' => $user->started,
+                    'approved' => $user->approved,
+                ];
+
+                return response()->json($response, 200);
+                
+            }
+
+            $response = ['message' => 'E-mail não encontrado'];
+            
+            return response()->json($response, 400);
+
+        } catch (Exception $exc) {
+            Log::error($exc->getMessage());
+            return response()->json(['message' => 'Falha ao verificar usuário.'], 500);
+        }
+    }
 }
