@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\UserLoginRequest;
 use App\Models\User;
 use Exception;
+use Faker\Core\Number;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -79,4 +80,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'Falha ao verificar usuário.'], 500);
         }
     }
+
+    
 }

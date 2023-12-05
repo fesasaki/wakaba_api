@@ -15,6 +15,7 @@ class Notification extends Model
         'user_id',
         'code',
         'email_sended',
+        'expired',
         'created_at'
     ];
 

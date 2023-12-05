@@ -17,8 +17,9 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
 
-            $table->integer('code');
+            $table->string('code');
             $table->string('email_sended')->nullable();
+            $table->boolean('expired');
 
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });

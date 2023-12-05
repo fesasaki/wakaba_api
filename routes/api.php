@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Common\AuthController;
+use App\Http\Controllers\Common\NotificationController;
 use App\Http\Controllers\Common\RequisitionController;
 use App\Http\Controllers\Common\UserController;
 use Illuminate\Support\Facades\Route;
@@ -18,5 +19,7 @@ Route::group([], function () {
     Route::post('/requisition/update',[RequisitionController::class, 'update']);
     Route::post('/requisition',[RequisitionController::class, 'createRequisiton']);
     Route::get('/requisition',[RequisitionController::class, 'list']);
-    
+
+    Route::post('/auth/code',[NotificationController::class, 'checkCode']);
+
 });
