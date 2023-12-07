@@ -12,6 +12,8 @@ Route::group([], function () {
     //Users
     Route::post('/auth/login',[AuthController::class, 'login']);
     Route::post('/auth/check',[AuthController::class, 'checkUser']);
+    Route::post('/auth/recover',[AuthController::class, 'recoverPassword']);
+
     Route::get('/users',[UserController::class, 'index']);
     Route::post('/users',[UserController::class, 'store']);
 
@@ -21,5 +23,6 @@ Route::group([], function () {
     Route::get('/requisition',[RequisitionController::class, 'list']);
 
     Route::post('/auth/code',[NotificationController::class, 'checkCode']);
+    Route::post('/auth/recode',[NotificationController::class, 'reCreate']);
 
 });

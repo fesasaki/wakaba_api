@@ -27,6 +27,30 @@ class NotificationController extends Controller
         return $notification;
     }
 
+    static public function reCreate(Request $request)
+    {   
+        $email = $request->get('email');
+        $randomCode = rand(1000, 9999); 
+
+        $user = User::where('email', $email)->first();
+
+        $notification = Notification::where('user_id', $user->id)->get();
+
+        foreach($notification as $notif) {
+            $notif->expired = true;
+            $notif->update();
+        }
+
+        $notification = new Notification();
+        $notification->user_id = $user->id;
+        $notification->code = $randomCode;
+        $notification->expired = false;
+
+        $notification->save();
+
+        return response()->json(['message' => 'Código reenviado para ' . $email], 200);
+    }
+
 
     public function checkCode(Request $request)
     {

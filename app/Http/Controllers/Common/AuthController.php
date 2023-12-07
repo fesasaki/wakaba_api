@@ -81,5 +81,10 @@ class AuthController extends Controller
         }
     }
 
+    public function recoverPassword(Request $request)
+    {
+        return $request;
+    }
+
     
 }
