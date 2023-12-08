@@ -75,6 +75,9 @@ class NotificationController extends Controller
             $notification->expired = true;
             $notification->update();
 
+            $user->started = true;
+            $user->update();
+
             return response()->json(['message' => 'Validação feita com sucesso'], 200);
         } else {
             return response()->json(['message' => 'Código incorreto'], 400);
