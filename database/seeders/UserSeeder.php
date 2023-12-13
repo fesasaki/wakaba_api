@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
                 'active' => true,
                 'started' => true,
                 'approved' => true,
-                'user_type' => 1,
+                'user_type' => 100,
                 'name' => 'Administrador do Sistema',
                 'phone' => '43999001381',
                 'email' => 'felipe.sasaki@arquest.com.br',

@@ -14,11 +14,13 @@ class Requisition extends Model
         'user_id',
         'status',
         'approved_id',
-        'created_at'
+        'created_at',
+        'updated_at'
+
     ];
 
     protected $hidden = [
-        'updated_at', 'deleted_at'
+        'deleted_at'
     ];
 
 

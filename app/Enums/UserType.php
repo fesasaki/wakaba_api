@@ -6,8 +6,8 @@ use BenSampo\Enum\Enum;
 
 final class UserType extends Enum
 {
-    const UNKNOW = 0;
+    const MASTER = 100;
     const ADMIN = 1;
-    const USER = 2;
+    const USER = 0;
 }
 

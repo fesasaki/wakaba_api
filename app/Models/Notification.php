@@ -16,7 +16,7 @@ class Notification extends Model
         'code',
         'email_sended',
         'expired',
-        'created_at'
+        'created_at',
     ];
 
     protected $hidden = [

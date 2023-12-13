@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers\Common;
 
-use App\Facades\LogSystem;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Common\UserRequest;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 
 class NotificationController extends Controller

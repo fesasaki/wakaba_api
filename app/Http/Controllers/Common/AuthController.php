@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Common;
 
 use App\Facades\LogSystem;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Common\UserLoginRequest;
 use App\Models\User;
 use Exception;
-use Faker\Core\Number;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -75,6 +73,17 @@ class AuthController extends Controller
             Log::error($exc->getMessage());
             return response()->json(['message' => 'Falha ao solicitar login.'], 500);
         } */
+    }
+
+    public function logout()
+    {
+        $uid = Auth::id();
+
+        Auth::logout();
+
+        LogSystem::info('Saiu do sistema', $uid);
+
+        return response()->json(['message' => 'Logout realizado com sucesso'], 200);
     }
 
     public function checkUser(Request $request)
