@@ -6,6 +6,7 @@ use App\Http\Controllers\Common\RequisitionController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ImageController;
 use App\Http\Controllers\User\PositionController;
+use App\Http\Controllers\User\PublicationController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,7 +38,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/user/{id}',[UserController::class, 'detail']);
     Route::get('/user-list',[UserController::class, 'index']);
     Route::get('/user-credential',[UserController::class, 'credential']);
-    Route::post('/user-photo',[UserController::class, 'storePhoto']);
+    Route::post('/user-photo',[ImageController::class, 'storePhoto']);
 
     //Picture Service
     Route::get('/picture/user/{id}',[ImageController::class, 'userPicture']);
@@ -54,4 +55,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('/category/{id}',[CategoryController::class, 'delete']);
     Route::post('/category-set',[CategoryController::class, 'setPosition']);
     Route::post('/category-unset',[CategoryController::class, 'unsetPosition']);
+
+    //Publication
+    Route::post('/publication',[PublicationController::class, 'store']);
+    Route::get('/publication',[PublicationController::class, 'index']);
+    Route::post('/publication-reaction',[PublicationController::class, 'setReaction']);
+    Route::get('/publication-reaction/{id}',[PublicationController::class, 'getReaction']);
 });

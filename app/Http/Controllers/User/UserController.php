@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
+use Nette\Utils\ImageColor;
 
 class UserController extends Controller
 
@@ -68,6 +68,8 @@ class UserController extends Controller
 
         $user->category = $list;
 
+        $user->picture = ImageController::userBase64(($id));
+
         return response()->json(
             [
                 'data' => $user,
@@ -79,17 +81,36 @@ class UserController extends Controller
     public function index(Request $request)
     {
 
-        $tag = $request->get('tag');
-
+        $category = $request->get('category');
+        $list = [];
         $users = User::where('id', '<>', 1)->where('active', true)->orderBy('name', 'ASC')->get();
 
         if (!$users) {
             return response()->json(['message' => 'Usuários não encontrado.'], 500);
         }
 
+        foreach($users as $user) {
+
+            $categories = UserCategory::where('user_id', $user->id)->with('category')->orderBy('category_id', 'ASC')->get();
+            $user->category = $categories;
+            $user->picture = ImageController::userBase64($user->id);
+            $user->position = PositionController::getPositionByUser($user->id);
+
+            if($category) {
+                foreach($categories as $cat) {
+                    if($cat->category_id == $category) {
+                        array_push($list, $user);
+                    }
+                }
+            } else {
+                array_push($list, $user);
+            }
+            
+        }
+
         return response()->json(
             [
-                'data' => $users,
+                'data' => $list,
             ],
             201
         );
@@ -120,23 +141,4 @@ class UserController extends Controller
         );
     }
 
-    public function storePhoto(Request $request)
-    {
-
-        $user_id = $request->get('user');
-
-        $base64 = $request->get('photo');
-
-        $str = substr($base64, strpos($base64, ",")+1);
-
-        $photo = base64_decode(($str));
-
-        $DS = DIRECTORY_SEPARATOR;
-
-        $user = User::find($user_id);
-
-        $folder = 'picture/user/' . $user->uuid . $DS . $user->uuid . '.png';
-
-        Storage::disk('public')->put($folder, $photo);
-    }
 }

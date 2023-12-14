@@ -109,4 +109,15 @@ class PositionController extends Controller
             return response()->json(['message' => 'Falha ao atribuir cargo.'], 500);
         }
     }
+
+    static function getPositionByUser($id)
+    {
+        $relation = UserPosition::where('user_id', $id)->with('position')->first();
+
+        if($relation) {
+            return $relation->position;
+        } else {
+            return null;
+        }
+    }
 }
