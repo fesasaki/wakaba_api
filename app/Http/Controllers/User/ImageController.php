@@ -20,13 +20,11 @@ class ImageController extends Controller
 
         $user = User::find($id);
 
-        $directory = storage_path('app/public/user/');
-
-        $path = $directory . $user->uuid;
+        $directory = storage_path('app/public/picture/user/' . $user->uuid . $DS . $user->uuid . '.png')  ;
 
         $default_path = storage_path('app/public/model/default.png');
 
-        if(is_dir($path)) {
+        if(is_file($directory)) {
             return response()->download($directory, $user->name);
         }
 

@@ -3,7 +3,9 @@
 use App\Http\Controllers\Common\AuthController;
 use App\Http\Controllers\Common\NotificationController;
 use App\Http\Controllers\Common\RequisitionController;
+use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ImageController;
+use App\Http\Controllers\User\PositionController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,11 +33,25 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::delete('/auth/logout',                       [AuthController::class, 'logout']);
     
-    Route::post('/users',[UserController::class, 'store']);
+    Route::post('/user',[UserController::class, 'store']);
     Route::get('/user/{id}',[UserController::class, 'detail']);
     Route::get('/user-list',[UserController::class, 'index']);
+    Route::get('/user-credential',[UserController::class, 'credential']);
+    Route::post('/user-photo',[UserController::class, 'storePhoto']);
 
     //Picture Service
     Route::get('/picture/user/{id}',[ImageController::class, 'userPicture']);
 
+    //Position
+    Route::post('/position',[PositionController::class, 'store']);
+    Route::get('/position',[PositionController::class, 'index']);
+    Route::delete('/position/{id}',[PositionController::class, 'delete']);
+    Route::post('/position-set',[PositionController::class, 'setPosition']);
+
+    //Category
+    Route::post('/category',[CategoryController::class, 'store']);
+    Route::get('/category',[CategoryController::class, 'index']);
+    Route::delete('/category/{id}',[CategoryController::class, 'delete']);
+    Route::post('/category-set',[CategoryController::class, 'setPosition']);
+    Route::post('/category-unset',[CategoryController::class, 'unsetPosition']);
 });

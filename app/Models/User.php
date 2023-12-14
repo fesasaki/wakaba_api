@@ -9,11 +9,12 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Traits\HasUuid;
 use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements CanResetPassword, JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUuid;
+    use HasApiTokens, HasFactory, Notifiable, HasUuid, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
