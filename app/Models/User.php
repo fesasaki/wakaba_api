@@ -22,13 +22,18 @@ class User extends Authenticatable implements CanResetPassword, JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
-        'active', 
+        'active',
+        'started',
+        'approved',   
         'user_type',
         'name', 
         'phone', 
         'email', 
         'username', 
         'password', 
+        'birthday',
+        'rg',
+        'cpf',   
         'created_at',
 
     ];

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-
+use Illuminate\Validation\Rule;
 
 class RequisitionController extends Controller
 {
@@ -23,13 +23,21 @@ class RequisitionController extends Controller
 
         /* try { */
 
+        $rules = [
+            'email' => Rule::unique('users'),
+        ];
+
+        $request->validate($rules);
+
         $data = $request->json();
+        $birthday = $request->get('birthday');
 
         $newUser = new User($data->all());
         $newUser->password = Str::random(8);
         $newUser->active = false;
         $newUser->started = false;
         $newUser->approved = false;
+        $newUser->birthday = date('Y-d-m', strtotime($birthday));
         $newUser->user_type = UserType::USER;
         $newUser->username = Str::random(12);
 

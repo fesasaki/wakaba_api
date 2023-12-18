@@ -9,10 +9,12 @@ use App\Http\Requests\Common\UserRequest;
 use App\Models\User;
 use App\Models\UserCategory;
 use App\Models\UserPosition;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Nette\Utils\ImageColor;
 
 class UserController extends Controller
@@ -41,6 +43,32 @@ class UserController extends Controller
         return response()->json(['message' => 'Usuário cadastrado com sucesso!'], 201);
     }
 
+
+    public function update(Request $request, $id)
+    {
+
+        $rules = [
+            'email' => Rule::unique('users'),
+        ];
+
+        $request->validate($rules);
+
+        $data = $request->json();
+
+        $user = User::find($id);
+
+        $res = $user->update($data->all());
+
+        if (!$res) {
+            return response()->json(['message' => 'Falha ao cadastrar usuário.'], 500);
+        }
+
+        LogSystem::info('Atualizou um usuário: ' . $user->name);
+
+        return response()->json(['message' => 'Usuário atualizado'], 201);
+    }
+
+
     public function detail(Request $request, $id)
     {
 
@@ -49,6 +77,16 @@ class UserController extends Controller
         if (!$user) {
             return response()->json(['message' => 'Usuário não encontrado.'], 500);
         }
+
+        if ($user->birthday) {
+            $birthYear = date('Y', strtotime($user->birthday));
+            $todayYear = date('Y', strtotime(Carbon::now()));
+            $user->birthday = date('d/m/Y', strtotime($user->birthday));
+            $user->age = $todayYear - $birthYear;
+        } else {
+            $user->age = null;
+        }
+
 
         $position = UserPosition::where('user_id', $id)->with('position')->first();
 
@@ -89,23 +127,22 @@ class UserController extends Controller
             return response()->json(['message' => 'Usuários não encontrado.'], 500);
         }
 
-        foreach($users as $user) {
+        foreach ($users as $user) {
 
             $categories = UserCategory::where('user_id', $user->id)->with('category')->orderBy('category_id', 'ASC')->get();
             $user->category = $categories;
             $user->picture = ImageController::userBase64($user->id);
             $user->position = PositionController::getPositionByUser($user->id);
 
-            if($category) {
-                foreach($categories as $cat) {
-                    if($cat->category_id == $category) {
+            if ($category) {
+                foreach ($categories as $cat) {
+                    if ($cat->category_id == $category) {
                         array_push($list, $user);
                     }
                 }
             } else {
                 array_push($list, $user);
             }
-            
         }
 
         return response()->json(
@@ -141,4 +178,23 @@ class UserController extends Controller
         );
     }
 
+    public function setAdmin(Request $request)
+    {
+
+        $user_id = $request->get('user');
+        $admin = $request->get('admin');
+
+        $user = User::find($user_id);
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuário não encontrado'], 500);
+        }
+
+        $user->user_type = $admin;
+        $user->update();
+
+        LogSystem::info('Atualizou o tipo de usuário: ' . $user->name);
+
+        return response()->json(['message' => 'Usuário atualizado'], 201);
+    }
 }

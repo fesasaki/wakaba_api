@@ -39,6 +39,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/user-list',[UserController::class, 'index']);
     Route::get('/user-credential',[UserController::class, 'credential']);
     Route::post('/user-photo',[ImageController::class, 'storePhoto']);
+    Route::post('/user-admin',[UserController::class, 'setAdmin']);
+    Route::put('/user/{id}',[UserController::class, 'update']);
 
     //Picture Service
     Route::get('/picture/user/{id}',[ImageController::class, 'userPicture']);

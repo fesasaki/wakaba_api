@@ -132,11 +132,23 @@ class PublicationController extends Controller
         $user_id = Auth::id();
         $self = false;
         $size = sizeof($publication);
+        $show = false;
+        $template = 'A';
 
         foreach($publication as $pub) {
+            if($size > 0) {
+                $show = true;
+            }
+
             if($pub->user_id == $user_id) {
                 $size = $size - 1;
                 $self = true;
+
+                if($size > 0) {
+                    $template = 'B';
+                } else {
+                    $template = 'C';
+                }
             }
         }
 
@@ -144,6 +156,8 @@ class PublicationController extends Controller
             'like' => [
                 'value' => $size,
                 'self'  => $self,
+                'show'  => $show,
+                'template' => $template,
             ],
         ];
 
