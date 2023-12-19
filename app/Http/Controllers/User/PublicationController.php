@@ -133,8 +133,8 @@ class PublicationController extends Controller
         $self = false;
         $size = sizeof($publication);
         $show = false;
-        $template = 'A';
-
+        $template = 'A'; //Any template
+        
         foreach($publication as $pub) {
             if($size > 0) {
                 $show = true;
@@ -144,10 +144,10 @@ class PublicationController extends Controller
                 $size = $size - 1;
                 $self = true;
 
-                if($size > 0) {
-                    $template = 'B';
+                if($size == 0) {
+                    $template = 'C';  //When user is participating but alone
                 } else {
-                    $template = 'C';
+                    $template = 'B'; //When user is participating with anothers
                 }
             }
         }
