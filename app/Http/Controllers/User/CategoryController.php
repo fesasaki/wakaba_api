@@ -44,6 +44,11 @@ class CategoryController extends Controller
             return response()->json(['message' => 'Categorias não encontradas.'], 500);
         }
 
+        foreach($categories as $cat) {
+            $count = UserCategory::where('category_id', $cat->id)->get();
+            $cat->count = sizeof($count);
+        }
+
         return response()->json(
             [
                 'data' => $categories,

@@ -197,4 +197,21 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Usuário atualizado'], 201);
     }
+
+    public function inactive(Request $request)
+    {
+        $user_id = Auth::id();
+        $user = User::find($user_id);
+        $target_id = $request->get('user');
+        $target = User::find($target_id);
+
+        if($user->user_type > UserType::USER) {
+            $target->active = false;
+            $target->update();
+
+            return response()->json(['message' => 'Usuário inativado'], 201);
+        } else {
+            return response()->json(['message' => 'Ação não autorizada'], 501);
+        }
+    }
 }

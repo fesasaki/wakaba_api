@@ -76,6 +76,7 @@ class PublicationController extends Controller
             $pub->creator_picture = ImageController::userBase64($pub->creator_id);
             $pub->category = $this->allCategory($pub->id);
             $pub->reaction = $this->getReaction($pub->id);
+            $pub->canEdit = $this->checkSelfCreation($pub->creator_id);
         }
 
         return response()->json(
@@ -162,5 +163,32 @@ class PublicationController extends Controller
         ];
 
         return $reactions;
+    }
+
+    static function checkSelfCreation($user)
+    {   
+        $user_id = Auth::id();
+
+        if($user == $user_id) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function delete($id) 
+    {
+        $user_id = Auth::id();
+        $publication = Publication::find($id);
+
+        if($user_id == $publication->creator_id) {
+            $res = $publication->delete();
+
+            if($res){
+                return response()->json(['message' => 'Publicação excluída'], 201);
+            }
+        } else {
+            return response()->json(['message' => 'Permission issue'], 501);
+        }
     }
 }

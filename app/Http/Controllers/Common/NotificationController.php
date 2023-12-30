@@ -16,7 +16,8 @@ class NotificationController extends Controller
 
         $notification = new Notification();
         $notification->user_id = $user_id;
-        $notification->code = $randomCode;
+        // $notification->code = $randomCode;
+        $notification->code = 2222;
         $notification->expired = false;
 
         $notification->save();
@@ -41,7 +42,7 @@ class NotificationController extends Controller
         $notification = new Notification();
         $notification->user_id = $user->id;
         // $notification->code = $randomCode;
-        $notification->code = 1111;
+        $notification->code = 2222;
         $notification->expired = false;
 
         $notification->save();

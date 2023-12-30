@@ -44,6 +44,11 @@ class PositionController extends Controller
             return response()->json(['message' => 'Usuários não encontrado.'], 500);
         }
 
+        foreach($positions as $pos) {
+            $count = UserPosition::where('position_id', $pos->id)->get();
+            $pos->count = sizeof($count);
+        }
+
         return response()->json(
             [
                 'data' => $positions,
@@ -119,5 +124,31 @@ class PositionController extends Controller
         } else {
             return null;
         }
+    }
+
+    public function detail($id)
+    {
+        $position = Position::find($id);
+
+        if(!$position) {
+            return response()->json(['message' => 'Cargo não encontrado'], 401);
+        }
+
+        return response()->json($position, 201);
+    }
+
+    public function  update(Request $request, $id)
+    {   
+        $name = $request->get('name');
+        $position = Position::find($id);
+
+        if(!$position) {
+            return response()->json(['message' => 'Cargo não encontrado'], 401);
+        }
+
+        $position->name = $name;
+        $position->update();
+
+        return response()->json(['message' => 'Cargo atualizado'], 201);
     }
 }

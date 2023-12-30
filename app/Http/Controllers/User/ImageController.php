@@ -113,4 +113,40 @@ class ImageController extends Controller
 
     }
 
+
+    static function storeBannerEvent($uuid, $base64)
+    {
+
+        $str = substr($base64, strpos($base64, ",")+1);
+
+        $photo = base64_decode(($str));
+
+        $DS = DIRECTORY_SEPARATOR;
+
+        $folder = 'event/' . $uuid . $DS . $uuid . '.jpg';
+
+        Storage::disk('public')->put($folder, $photo);
+
+        return response()->json(['message' => 'Foto de perfil atualizada com sucesso'], 201);
+    }
+
+    static function bannerBase64Event($uuid) {
+
+
+        $DS = DIRECTORY_SEPARATOR;
+
+        $folder = 'event/' . $uuid . $DS . $uuid . '.jpg';
+
+        $photo = Storage::disk('public')->get($folder);
+
+        if($photo) {
+            $base64 = base64_encode($photo);
+        } else {
+            $base64 = null;
+        }
+
+        return $base64;
+
+    }
+
 }
