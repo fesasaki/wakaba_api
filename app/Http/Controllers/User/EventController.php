@@ -69,7 +69,54 @@ class EventController extends Controller
         }
     }
 
+
     public function index(Request $request)
+    {
+
+        $year = $request->get('year');
+        $total = 0;
+        $list = [];
+
+        $months =  [
+            ['value' => '01', 'name' => 'Janeiro', 'events' => []],
+            ['value' => '02', 'name' => 'Fevereiro', 'events' => []],
+            ['value' => '03', 'name' => 'Março', 'events' => []],
+            ['value' => '04', 'name' => 'Abril', 'events' => []],
+            ['value' => '05', 'name' => 'Maio', 'events' => []],
+            ['value' => '06', 'name' => 'Junho', 'events' => []],
+            ['value' => '07', 'name' => 'Julho', 'events' => []],
+            ['value' => '08', 'name' => 'Agosto', 'events' => []],
+            ['value' => '09', 'name' => 'Setembro', 'events' => []],
+            ['value' => '10', 'name' => 'Outubro', 'events' => []],
+            ['value' => '11', 'name' => 'Novembro', 'events' => []],
+            ['value' => '12', 'name' => 'Dezembro', 'events' => []],
+        ];
+
+
+        foreach($months as $m) {
+
+            $events = Event::whereMonth('date', $m['value'])->whereYear('date', $year)->orderBy('date', 'ASC')->with('creator')->get();
+
+            foreach($events as $evt) {
+                $evt->subscriber = $this->countSubscriber($evt->id);
+                $total++;
+            }
+
+            $m['events'] = $events;
+            
+            array_push($list, $m);
+        }
+
+        return response()->json(
+            [
+                'data' => $list,
+                'total' => $total
+            ],
+            201
+        );
+    }
+
+    public function index2(Request $request)
     {
 
         $events = Event::orderBy('id', 'DESC')->with('creator')->get();
