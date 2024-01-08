@@ -79,10 +79,9 @@ class UserController extends Controller
         }
 
         if ($user->birthday) {
-            $birthYear = date('Y', strtotime($user->birthday));
-            $todayYear = date('Y', strtotime(Carbon::now()));
+            $user->age = Carbon::parse($user->birthday)->diff(Carbon::now())->format('%y');
             $user->birthday = date('d/m/Y', strtotime($user->birthday));
-            $user->age = $todayYear - $birthYear;
+            
         } else {
             $user->age = null;
         }

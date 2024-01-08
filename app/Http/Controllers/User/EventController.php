@@ -11,6 +11,7 @@ use App\Models\EventSubscription;
 use App\Models\Position;
 use App\Models\UserCategory;
 use App\Models\UserPosition;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,7 @@ class EventController extends Controller
     {
         DB::beginTransaction();
 
-        try {
+        // try {
 
             $data = $request->json();
             $public = $request->get('public');
@@ -35,6 +36,7 @@ class EventController extends Controller
             $event = new Event($data->all());
             $event->creator_id = Auth::id();
             $event->status = EventStatus::ONGOING;
+            $event->date = Carbon::now();
 
             $res = $event->save();
 
@@ -62,11 +64,11 @@ class EventController extends Controller
 
             DB::commit();
             return response()->json(['message' => 'Evento criado com sucesso!'], 201);
-        } catch (Exception $exc) {
+        /* } catch (Exception $exc) {
             DB::rollback();
             Log::error($exc->getMessage());
             return response()->json(['message' => 'Falha ao criar evento.'], 500);
-        }
+        } */
     }
 
 
@@ -176,7 +178,15 @@ class EventController extends Controller
         $user_id = Auth::id();
         $event_id = $request->get('event');
 
+        $event = Event::find($event_id);
+
+        if($event->status != EventStatus::ONGOING) {
+            return response()->json(['message' => 'Inscrição já está encerrada'], 401);
+        }
+
+
         EventSubscription::where('event_id', $event_id)->where('user_id', $user_id)->delete();
+
 
         $subscriber = new EventSubscription();
         $subscriber->event_id = $event_id;
@@ -191,6 +201,12 @@ class EventController extends Controller
 
         $user_id = Auth::id();
         $event_id = $request->get('event');
+
+        $event = Event::find($event_id);
+
+        if($event->status != EventStatus::ONGOING) {
+            return response()->json(['message' => 'Inscrição já está encerrada'], 401);
+        }
 
         EventSubscription::where('event_id', $event_id)->where('user_id', $user_id)->delete();
 
@@ -262,12 +278,23 @@ class EventController extends Controller
     public function detail($id)
     {   
         $user_id = Auth::id();
-        $event = Event::find($id);
+        $event = Event::with('creator')->find($id);
         $list = [];
         $self = false;
 
         if (!$event) {
             return response()->json(['message' => 'Evento não encontrado'], 401);
+        }
+
+        $event->banner = ImageController::bannerBase64Event($event->uuid);
+        $event->category = $this->allCategory($event->id);
+        $event->creator_picture = ImageController::userBase64($event->creator_id);
+        $event->canEdit = $this->checkSelfCreation($event->creator_id);
+
+        if($event->status == EventStatus::ONGOING) {
+            $event->open = true;
+        } else {
+            $event->open = false;
         }
 
         $subscriber = EventSubscription::with('user')->where('event_id', $id)->get();
@@ -316,6 +343,25 @@ class EventController extends Controller
             return true;
         } else {
             return false;
+        }
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $event_id = $request->get('event');
+        $status = $request->get('status');
+
+        $event = Event::find($event_id);
+
+        if(!$event){
+            return response()->json(['message' => 'Evento não encontrado'], 401);
+        }
+
+        $event->status = $status;
+        $res = $event->update();
+
+        if($res){
+            return response()->json(['message' => 'Evento atualizado'], 201);
         }
     }
 }

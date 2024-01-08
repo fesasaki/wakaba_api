@@ -23,6 +23,9 @@ class Event extends Model
         'description',
         'public',
         'date',
+        'date_initial',
+        'date_end',
+        'date_limit',
         'location',
         'created_at'
     ];

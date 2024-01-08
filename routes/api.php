@@ -6,6 +6,7 @@ use App\Http\Controllers\Common\RequisitionController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\EventController;
 use App\Http\Controllers\User\ImageController;
+use App\Http\Controllers\User\MusicController;
 use App\Http\Controllers\User\PositionController;
 use App\Http\Controllers\User\PublicationController;
 use App\Http\Controllers\User\UserController;
@@ -68,6 +69,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/event/{id}',[EventController::class, 'detail']);
     Route::post('/event-subscribe',[EventController::class, 'subscribe']);
     Route::post('/event-cancel-subscribe',[EventController::class, 'cancelSubscribe']);
+    Route::post('/event-status',[EventController::class, 'updateStatus']);
     Route::delete('/event/{id}',[EventController::class, 'delete']);
 
     //Publication
@@ -76,4 +78,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/publication-reaction',[PublicationController::class, 'setReaction']);
     Route::get('/publication-reaction/{id}',[PublicationController::class, 'getReaction']);
     Route::delete('/publication/{id}',[PublicationController::class, 'delete']);
+
+    //Music
+    Route::post('/music',[MusicController::class, 'store']);
+    Route::get('/music',[MusicController::class, 'index']);
 });
