@@ -96,8 +96,8 @@ class EventController extends Controller
 
 
         foreach($months as $m) {
-
-            $events = Event::whereMonth('date', $m['value'])->whereYear('date', $year)->orderBy('date', 'ASC')->with('creator')->get();
+            
+            $events = Event::whereMonth('date_initial', $m['value'])->whereYear('date', $year)->orderBy('date', 'ASC')->with('creator')->get();
 
             foreach($events as $evt) {
                 $evt->subscriber = $this->countSubscriber($evt->id);

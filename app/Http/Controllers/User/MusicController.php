@@ -71,7 +71,7 @@ class MusicController extends Controller
 
             $folder = 'music/' . $music->uuid . $DS . $music->uuid . '.pdf';
             $document = Storage::disk('public')->get($folder);
-            $base64 = $base64 = base64_encode($document);;
+            $base64 = $base64 = base64_encode($document);
 
             $music->document = $base64;
         }
